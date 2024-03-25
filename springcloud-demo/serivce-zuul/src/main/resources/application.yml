@@ -1,0 +1,30 @@
+server:
+  port: 9000 # 端口
+spring:
+  application:
+    name : server-zuul # 应用名称
+# 路由规则
+# ？ 匹配任意字符 /server-consumer/
+zuul:
+  routes:
+    server-consumer :           #路由id
+      #配置请求url的请求路径：
+      # ？ 匹配任意字符  /server-consumer/？：
+      # * 匹配任意数量字符不包括子路径
+      # ** 匹配任意数量字符包括所有下级路径
+      path : /server-consumer/**
+      service-id : server-consumer #映射路径对应的微服务地址
+#  ignored-patterns: /**/order/** # url排除，排除所有包含/order/的路径
+  ignored-services: server-consumer #服务名称排除
+  prefix: api #添加路由前缀
+
+eureka:
+  server:
+    enable-self-preservation: false # true: 开启自我保护模式，false: 关团自我保护模式
+  instance :
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+  ##主机名，不配置的时俄将根据操作系统的主机名来获取
+  client:
+    service-url:
+      defaultZone: http://eureka-server02:8762/eureka/,http://eureka-server03:8763/eureka/
